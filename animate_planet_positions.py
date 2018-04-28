@@ -1,10 +1,11 @@
-import matplotlib.animation as animation
+from __future__ import unicode_literals
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import math
 
 import make_planets
+import planet_angle
 
 def plot_circle(r):
 
@@ -18,78 +19,49 @@ def plot_circle(r):
     plt.plot(x, y, color='k')
     return
 
-def setup_solar_sys():
+def setup_solar_sys(planet_list):
 
     mpl.rcParams['savefig.dpi'] = 500
-    fig = plt.figure()
+    #mpl.rcParams['fontsize'] = 14
+    mpl.rc('font', family='Arial')
+    fig = plt.figure(figsize=(10,10))
 
     #plot sun
     plt.scatter([0], [0], marker='o', color='goldenrod', s=1000)
   
 
-    #Plot planet orbits
-    plot_circle(3)#merc
-    plot_circle(4)#ven
-    plot_circle(5)#earth
-    plot_circle(6)#mars
-    plot_circle(8)#Jup
-    plot_circle(10.5)#sat
-    plot_circle(13)#ur
-    plot_circle(15.5)#nep
-    plot_circle(18)#plu
+    for planet in planet_list:
+
+        plot_circle(planet.plot_radius)
 
     plt.axis('equal')
     plt.axis('off')
 
-    planet_cols = ['brown', 'pink', 'blue', 'r', 'orange', 'goldenrod', 'b', 'lightblue', 'gray']
+    return fig
 
-    return
+year=1993
+month=7
+day=19
+hour=22
+minute=30
+seccond=0
 
-
-def final_angle(date, planet):
-    
-    angle = 360
-
-    return angle
-
-
-
-
-        
-
-setup_solar_sys()
+#Get the planets 
 planet_list = make_planets.make_planets()
+fig = setup_solar_sys(planet_list)
 
-print planet_list[0].name
+#Get the angle of each planet given the date
+for planet in planet_list:
+    planet = planet_angle.planet_angle(planet, year, month, day, hour, minute, seccond)
 
+for planet in planet_list:
+    planet.x_position = planet.plot_radius*math.cos(math.radians(planet.angle))
+    planet.y_position = planet.plot_radius*math.sin(math.radians(planet.angle))
+    plt.text(planet.x_position, planet.y_position, planet.symbol, zorder=200)
 
-'''
-plots = []
-
-powers = np.linspace(1, 2, 50)
-
-for power in powers:
-    pow_plot = plt.scatter( np.linspace(0, 1, 50), [i**power for i in np.linspace(0, 1, 50)])
-    pow_plots.append([pow_plot])
-    
-anim=animation.ArtistAnimation(fig, pow_plots, interval=100,blit=True)
-anim.save('vid1.mp4', writer=animation.writers['ffmpeg'](fps=15))
-plt.show()
+plt.scatter([planet.x_position for planet in planet_list], [planet.y_position for planet in planet_list], c=[planet.colour for planet in planet_list], s=400, zorder=100)
 
 
-a = np.zeros(shape=(10,10))
-fig = plt.figure()
-ims = []
+plt.savefig('planet_position.png')
 
-for i in range(10):
-    for j in range(10):
-
-        a[i][j] = 1
-        im = plt.imshow(a)
-        ims.append([im])
-        
-anim=animation.ArtistAnimation(fig, ims, interval=100,blit=True)
-anim.save('vid2.mp4', writer=animation.writers['ffmpeg'](fps=15))
-'''
-plt.show()
 

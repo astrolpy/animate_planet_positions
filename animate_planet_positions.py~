@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
-import make_planets
+import . make_planets
 
 def plot_circle(r):
 
